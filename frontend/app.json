@@ -1,0 +1,94 @@
+{
+  "expo": {
+    "name": "Nek Sathi",
+    "slug": "frontend",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/images/icon.png",
+    "scheme": "neksathi",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.emergent.safetyapppreview.g7z683",
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "Share your live location during emergencies",
+        "NSLocationAlwaysAndWhenInUseUsageDescription": "Keep guardians updated while location sharing is on",
+        "NSLocationAlwaysUsageDescription": "Keep guardians updated while location sharing is on",
+        "NSCameraUsageDescription": "Scan safety QR tags and capture SOS evidence",
+        "NSMicrophoneUsageDescription": "Record audio in SOS emergency videos",
+        "NSMotionUsageDescription": "Detect vehicle crashes automatically",
+        "UIBackgroundModes": ["location", "fetch", "remote-notification"]
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "backgroundColor": "#0B284D"
+      },
+      "edgeToEdgeEnabled": true,
+      "package": "com.emergent.safetyapppreview.g7z683",
+      "permissions": [
+        "ACCESS_COARSE_LOCATION",
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_BACKGROUND_LOCATION",
+        "CAMERA",
+        "RECORD_AUDIO",
+        "VIBRATE",
+        "FOREGROUND_SERVICE",
+        "FOREGROUND_SERVICE_LOCATION"
+      ]
+    },
+    "web": {
+      "bundler": "metro",
+      "output": "single",
+      "favicon": "./assets/images/favicon.png"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-secure-store",
+      "expo-audio",
+      [
+        "expo-font",
+        {
+          "fonts": [
+            "./assets/fonts/PlusJakartaSans-Regular.ttf"
+          ]
+        }
+      ],
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Scan safety QR tags and capture SOS evidence",
+          "microphonePermission": "Record audio in SOS emergency videos"
+        }
+      ],
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "Keep guardians updated while location sharing is on",
+          "locationWhenInUsePermission": "Share your live location during emergencies",
+          "isAndroidBackgroundLocationEnabled": true
+        }
+      ],
+      [
+        "expo-notifications",
+        {
+          "color": "#DC2626"
+        }
+      ],
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/images/splash-image.png",
+          "imageWidth": 200,
+          "resizeMode": "contain",
+          "backgroundColor": "#0B284D"
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
+}

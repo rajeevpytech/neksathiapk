@@ -1,0 +1,172 @@
+{
+  "app_name": "Nek Sathi",
+  "personality": "1 iOS-Native Clean",
+  "personality_one_liner": "A calm, highly readable, and deeply trustworthy safety companion with immediate, unambiguous emergency actions.",
+  "color": {
+    "surface": "#F4F5F7",
+    "onSurface": "#111827",
+    "surfaceSecondary": "#FFFFFF",
+    "onSurfaceSecondary": "#111827",
+    "surfaceTertiary": "#F9FAFB",
+    "onSurfaceTertiary": "#374151",
+    "surfaceInverse": "#0B284D",
+    "onSurfaceInverse": "#FFFFFF",
+    "brand": "#0B284D",
+    "brandPrimary": "#0B284D",
+    "onBrandPrimary": "#FFFFFF",
+    "brandSecondary": "#DC2626",
+    "onBrandSecondary": "#FFFFFF",
+    "brandTertiary": "#E2E8F0",
+    "onBrandTertiary": "#0B284D",
+    "success": "#059669",
+    "onSuccess": "#FFFFFF",
+    "warning": "#D97706",
+    "onWarning": "#FFFFFF",
+    "error": "#DC2626",
+    "onError": "#FFFFFF",
+    "info": "#0B284D",
+    "onInfo": "#FFFFFF",
+    "border": "#E5E7EB",
+    "borderStrong": "#CBD5E1",
+    "divider": "#F1F5F9"
+  },
+  "typography": {
+    "displayFontFamily": "Plus Jakarta Sans",
+    "textFontFamily": "Plus Jakarta Sans",
+    "scale": {
+      "sm": 12,
+      "base": 14,
+      "lg": 16,
+      "xl": 20,
+      "2xl": 24
+    }
+  },
+  "spacing": {
+    "rule": "Generous vertical rhythm and large hit areas (44pt+) so actions are easy to tap during high-stress moments.",
+    "xs": 4,
+    "sm": 8,
+    "md": 12,
+    "lg": 16,
+    "xl": 24,
+    "2xl": 32,
+    "3xl": 48
+  },
+  "radius_tokens": {
+    "sm": 6,
+    "md": 12,
+    "lg": 20,
+    "pill": 999
+  },
+  "shadow_tier": "1",
+  "navigation": "bottom_tabs",
+  "icon_set": "Ionicons",
+  "glassmorphism": {
+    "enabled": "true",
+    "do's": [
+      "Use for the bottom tab bar to allow map and content to scroll beneath.",
+      "Use for bottom-sheet headers on the Family Map.",
+      "Use a frosted glass effect behind the main SOS button's outer ripple for a premium tactile feel."
+    ],
+    "dont's": [
+      "Do not use glass on critical alerts or error messages where maximum contrast is needed."
+    ]
+  },
+  "platform_libraries": {
+    "glass": {
+      "ios": "expo-glass-effect",
+      "android": "expo-blur",
+      "low_end_android_fallback": "solid surfaceSecondary"
+    },
+    "image": "expo-image",
+    "blur": "expo-blur",
+    "bottom_sheet": "@gorhom/bottom-sheet",
+    "animation": "react-native-reanimated",
+    "gesture": "react-native-gesture-handler"
+  },
+  "screens": [
+    {
+      "name": "Dashboard (Home)",
+      "purpose": "Provide immediate access to the One-Tap SOS panic button and quick safety tools.",
+      "states": {
+        "loading": "Centered spinner on surface.",
+        "empty": "N/A - Dashboard always shows tools.",
+        "error": "Error toast, dashboard remains accessible."
+      },
+      "layout": "Bento Box layout. Top: Greeting and system status (e.g., 'Device Locked & Secure'). Center: A massive, centralized circular SOS Panic Button using the 'error' (#DC2626) red color with a subtle pulsing ripple effect behind it. Bottom: 2x2 grid of square 'Bento' cards for E-Contacts, Live Location, Video Record, and Silent Alert. Keep it highly legible and uncrowded."
+    },
+    {
+      "name": "Family Guardian",
+      "purpose": "Live map view tracking family members and managing geofenced Safe Zones.",
+      "states": {
+        "loading": "Map skeleton loading.",
+        "empty": "Illustration of family walking together, prompt to 'Invite Family Members'.",
+        "error": "Message 'Unable to load location data' with retry button."
+      },
+      "layout": "Full-screen map using absolute positioning. Safe Zones appear as translucent colored circles on the map. A bottom sheet (@gorhom/bottom-sheet) sits over the map listing family members, their battery levels, and current address. The sheet has a glassmorphic header and a sticky 'Add Safe Zone' primary CTA."
+    },
+    {
+      "name": "Vehicles & QR",
+      "purpose": "Manage registered vehicles, QR tags, and access the QR scanner for public reports.",
+      "states": {
+        "loading": "Skeleton list of vehicle cards.",
+        "empty": "Image of a parked car with 'No vehicles registered' and an 'Add Vehicle' button.",
+        "error": "Error banner fetching vehicle status."
+      },
+      "layout": "Single column list. Each vehicle is a large 'surfaceSecondary' card displaying status (Safe / Lost Mode), live GPS track snippet, and overspeed alerts. A floating action button (FAB) with a QR icon sits bottom right to quickly open the scanner without leaving the screen."
+    },
+    {
+      "name": "Alerts Feed",
+      "purpose": "Chronological history of incidents, SOS events, and Safe Zone alerts.",
+      "states": {
+        "loading": "List skeleton.",
+        "empty": "Icon + 'No recent alerts. Everything is secure.'",
+        "error": "Failed to load feed, pull down to refresh."
+      },
+      "layout": "Simple, highly readable vertical list. Urgent alerts (SOS triggered) use a 'brandSecondary' tinted icon container. Standard alerts (entered safe zone) use a 'brandTertiary' tinted container. Minimalist layout focused on timestamps and clear typography."
+    },
+    {
+      "name": "Profile & Settings",
+      "purpose": "Manage theft protection, emergency voice settings, and user profile.",
+      "states": {
+        "loading": "Profile skeleton.",
+        "empty": "N/A",
+        "error": "Failed to load profile."
+      },
+      "layout": "Settings index layout. Top section is a hero banner for 'Theft Protection' with a secure lock image, acting as a master toggle for Intruder Selfie & SIM-swap alert. Below it, standard list rows for Hindi/English Voice toggle, Emergency Contact CRUD, and Account settings."
+    }
+  ],
+  "images": {
+    "family_empty_state": {
+      "url": "https://images.pexels.com/photos/33014349/pexels-photo-33014349.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+      "alt": "Family walking together"
+    },
+    "vehicle_empty_state": {
+      "url": "https://images.pexels.com/photos/15216662/pexels-photo-15216662.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+      "alt": "Cars parked in a modern garage"
+    },
+    "theft_protection_hero": {
+      "url": "https://images.unsplash.com/photo-1614064641938-3bbee52942c7?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA1NTN8MHwxfHNlYXJjaHwxfHxzZWN1cml0eSUyMHNoaWVsZCUyMGxvY2t8ZW58MHx8fHwxNzg3NDU4MzI1fDA&ixlib=rb-4.1.0&q=85",
+      "alt": "Security padlock on keyboard representing digital theft protection"
+    },
+    "map_placeholder": {
+      "url": "https://images.unsplash.com/photo-1661577804141-6f0180f82373?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA1ODR8MHwxfHNlYXJjaHwyfHxtYXAlMjBuYXZpZ2F0aW9uJTIwcGlufGVufDB8fHx8MTc4NzQ1ODMyNXww&ixlib=rb-4.1.0&q=85",
+      "alt": "Map with navigation pins"
+    }
+  },
+  "haptics": {
+    "sos_button_press": "heavy",
+    "tab_change": "light",
+    "theft_toggle": "medium",
+    "add_safe_zone": "success"
+  },
+  "instructions_to_main_agent": [
+    "Follow the 'iOS-Native Clean' personality with the custom Deep Blue (#0B284D) and Emergency Red (#DC2626) palette. Do not use generic purple/indigo.",
+    "Implement the Dashboard using a Bento Box grid. The SOS button MUST be the largest element on the screen, centered, using the Emergency Red color and triggering a 'heavy' haptic response.",
+    "For the Family screen, use `@gorhom/bottom-sheet` over a full-bleed map. Ensure the bottom sheet has a glassmorphic effect if supported.",
+    "Typography must use 'Plus Jakarta Sans'. Ensure font weights do not exceed 500 anywhere, using font size to establish visual hierarchy instead.",
+    "Any image used as a hero background (like the Theft Protection banner) MUST have a vertical gradient scrim overlay (transparent to #0B284D) to ensure white text remains readable.",
+    "Do not add emojis anywhere in the system UI.",
+    "Ensure 'Live Location' and 'Safe Zones' are clearly distinguishable using map pin components and radius circles.",
+    "Implement strict touch targets of 44x44pt minimum across all buttons and bento cards, critical for usability in panic situations."
+  ]
+}
