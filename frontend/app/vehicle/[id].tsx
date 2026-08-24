@@ -1,9 +1,10 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { View, StyleSheet, ScrollView, Pressable, Switch, Modal, Platform, TextInput, Share } from "react-native";
 import { useLocalSearchParams, useRouter, useFocusEffect } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import QRCode from "react-native-qrcode-svg";
+import * as Location from "expo-location";
 import { MapView, Marker, PROVIDER_GOOGLE } from "@/src/components/maps";
 import { api } from "@/src/lib/api";
 import { Vehicle, VehicleContact, TrackPoint } from "@/src/lib/types";
@@ -26,6 +27,8 @@ export default function VehicleDetail() {
   const [cName, setCName] = useState("");
   const [cPhone, setCPhone] = useState("");
   const [saving, setSaving] = useState(false);
+  const [tracking, setTracking] = useState(false);
+  const watchRef = useRef<Location.LocationSubscription | null>(null);
 
   const load = useCallback(async () => {
     try {
@@ -45,6 +48,56 @@ export default function VehicleDetail() {
   }, [id, show]);
 
   useFocusEffect(useCallback(() => { load(); }, [load]));
+
+  const postLocation = useCallback(
+    async (coords: Location.LocationObjectCoords) => {
+      const speed_kmh = coords.speed != null && coords.speed >= 0 ? coords.speed * 3.6 : 0;
+      const point = {
+        latitude: coords.latitude,
+        longitude: coords.longitude,
+        speed_kmh,
+        heading: coords.heading != null && coords.heading >= 0 ? coords.heading : undefined,
+      };
+      try {
+        await api(`/vehicles/${id}/location`, { method: "POST", body: point });
+        setTrack((prev) => [{ ...point, recorded_at: new Date().toISOString() } as any, ...prev].slice(0, 50));
+      } catch {
+        /* best effort */
+      }
+    },
+    [id]
+  );
+
+  const startTracking = useCallback(async () => {
+    if (watchRef.current) return;
+    const perm = await Location.getForegroundPermissionsAsync();
+    let granted = perm.granted;
+    if (!granted && perm.canAskAgain) granted = (await Location.requestForegroundPermissionsAsync()).granted;
+    if (!granted) {
+      show("Location permission needed to track", "error");
+      return;
+    }
+    watchRef.current = await Location.watchPositionAsync(
+      { accuracy: Location.Accuracy.High, timeInterval: 8000, distanceInterval: 15 },
+      (loc) => postLocation(loc.coords)
+    );
+    setTracking(true);
+    show("Live tracking started from this phone", "success");
+  }, [postLocation, show]);
+
+  const stopTracking = useCallback(() => {
+    watchRef.current?.remove();
+    watchRef.current = null;
+    setTracking(false);
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      watchRef.current?.remove();
+      watchRef.current = null;
+    };
+  }, []);
+
 
   const toggleLost = async () => {
     if (!vehicle) return;
@@ -183,6 +236,21 @@ export default function VehicleDetail() {
           )}
         </View>
 
+        {/* Track from this phone */}
+        <View style={{ marginTop: spacing.md }}>
+          {tracking ? (
+            <Button testID="vehicle-track-stop" title="Stop tracking" variant="outline" icon="stop-circle-outline" onPress={stopTracking} />
+          ) : (
+            <Button testID="vehicle-track-start" title="Track from this phone" icon="navigate" onPress={startTracking} />
+          )}
+          {tracking && (
+            <View style={styles.liveBadge} testID="vehicle-track-live">
+              <View style={styles.liveDot} />
+              <Txt variant="caption" color={colors.success} weight="600">Sending live location…</Txt>
+            </View>
+          )}
+        </View>
+
         {/* Crash detection */}
         <Pressable testID="vehicle-crash-button" onPress={() => router.push(`/crash-detection?vehicleId=${id}`)} style={styles.crashRow}>
           <View style={[styles.icon, { backgroundColor: "#FEF3C7" }]}>
@@ -255,6 +323,8 @@ const styles = StyleSheet.create({
   trackMeta: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", padding: spacing.md },
   metaItem: { flexDirection: "row", alignItems: "center" },
   noTrack: { height: 140, alignItems: "center", justifyContent: "center" },
+  liveBadge: { flexDirection: "row", alignItems: "center", justifyContent: "center", marginTop: spacing.sm },
+  liveDot: { width: 8, height: 8, borderRadius: 4, backgroundColor: colors.success, marginRight: spacing.sm },
   crashRow: { flexDirection: "row", alignItems: "center", backgroundColor: colors.surfaceSecondary, borderRadius: radius.lg, padding: spacing.lg, marginTop: spacing.lg, ...shadow.card },
   contactRow: { flexDirection: "row", alignItems: "center", backgroundColor: colors.surfaceSecondary, borderRadius: radius.md, padding: spacing.md, marginBottom: spacing.sm, ...shadow.card },
   contactAvatar: { width: 40, height: 40, borderRadius: 20, backgroundColor: colors.brandTertiary, alignItems: "center", justifyContent: "center", marginRight: spacing.md },
