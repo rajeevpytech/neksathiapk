@@ -14,6 +14,7 @@ import { useIconFonts } from "@/src/hooks/use-icon-fonts";
 import { AuthProvider } from "@/src/context/AuthContext";
 import { ToastProvider } from "@/src/context/ToastContext";
 import { FONT } from "@/src/theme/theme";
+import "@/src/lib/backgroundLocation";
 
 LogBox.ignoreAllLogs(true);
 SplashScreen.preventAutoHideAsync();

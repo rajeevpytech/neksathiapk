@@ -5,6 +5,7 @@ import { Ionicons } from "@expo/vector-icons";
 import * as Location from "expo-location";
 import { api } from "@/src/lib/api";
 import { LiveShare } from "@/src/lib/types";
+import { startBackgroundLocation, stopBackgroundLocation } from "@/src/lib/backgroundLocation";
 import { useToast } from "@/src/context/ToastContext";
 import { Header, Button, Loader, EmptyState, Badge } from "@/src/components/ui";
 import { Txt } from "@/src/components/Txt";
@@ -21,6 +22,7 @@ export default function LiveLocation() {
   const [duration, setDuration] = useState(30);
   const [creating, setCreating] = useState(false);
   const [tracking, setTracking] = useState(false);
+  const [bgMode, setBgMode] = useState<"background" | "foreground">("foreground");
   const watchRef = useRef<Location.LocationSubscription | null>(null);
 
   const activeShares = shares.filter((s) => s.active);
@@ -55,11 +57,18 @@ export default function LiveLocation() {
   }, []);
 
   const startTracking = useCallback(async () => {
+    // Prefer OS background updates (works on installed build); fall back to a
+    // foreground watcher (Expo Go / web) so sharing still streams while open.
+    const mode = await startBackgroundLocation();
+    if (mode === "background") {
+      setBgMode("background");
+      setTracking(true);
+      return;
+    }
+    if (mode === "denied") return;
+
+    setBgMode("foreground");
     if (watchRef.current) return;
-    const perm = await Location.getForegroundPermissionsAsync();
-    let granted = perm.granted;
-    if (!granted && perm.canAskAgain) granted = (await Location.requestForegroundPermissionsAsync()).granted;
-    if (!granted) return;
     watchRef.current = await Location.watchPositionAsync(
       { accuracy: Location.Accuracy.Balanced, timeInterval: 15000, distanceInterval: 25 },
       (loc) => postLocation(loc.coords)
@@ -70,6 +79,7 @@ export default function LiveLocation() {
   const stopTracking = useCallback(() => {
     watchRef.current?.remove();
     watchRef.current = null;
+    stopBackgroundLocation();
     setTracking(false);
   }, []);
 
@@ -125,7 +135,9 @@ export default function LiveLocation() {
           {tracking && (
             <View style={styles.tracking} testID="live-tracking-banner">
               <View style={styles.pulse} />
-              <Txt style={{ color: colors.success }} weight="600">Broadcasting your location live</Txt>
+              <Txt style={{ color: colors.success }} weight="600">
+                {bgMode === "background" ? "Broadcasting live — even in background" : "Broadcasting your location live"}
+              </Txt>
             </View>
           )}
 

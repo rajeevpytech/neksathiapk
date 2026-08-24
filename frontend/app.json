@@ -18,6 +18,7 @@
         "NSCameraUsageDescription": "Scan safety QR tags and capture SOS evidence",
         "NSMicrophoneUsageDescription": "Record audio in SOS emergency videos",
         "NSMotionUsageDescription": "Detect vehicle crashes automatically",
+        "NSPhotoLibraryUsageDescription": "Set your profile photo",
         "UIBackgroundModes": ["location", "fetch", "remote-notification"]
       }
     },
@@ -68,7 +69,14 @@
         {
           "locationAlwaysAndWhenInUsePermission": "Keep guardians updated while location sharing is on",
           "locationWhenInUsePermission": "Share your live location during emergencies",
-          "isAndroidBackgroundLocationEnabled": true
+          "isAndroidBackgroundLocationEnabled": true,
+          "isAndroidForegroundServiceEnabled": true
+        }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Set your profile photo"
         }
       ],
       [
